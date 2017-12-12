@@ -6,7 +6,9 @@ import sys
 
 DEBUG=False
 
+# check for presence of a CLI parameter
 if len(sys.argv) == 2:
+  # 1 parameter required = filename to be processed
   ifile = sys.argv[1]
 else:
   sys.exit(0)
@@ -40,12 +42,14 @@ if os.path.isfile(ifile):
           # NOK: the first cell is not an IP-address
           sit = si[0]
       else:
+        # lines consisting of pure whitespace are replaced by "#"; not to worry. "#" are removed later
         sit="#"
     else:
-      # empty lines are replaced by "#"
+      # empty lines are replaced by "#"; not to worry. "#" are removed later
       sit = "#"
     if DEBUG:
       print("     ",sit)
+    # output the result; excluding "#"
     if sit[0] is not "#":
       site = sit
       if DEBUG:
