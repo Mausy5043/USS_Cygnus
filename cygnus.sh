@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Find out where we're running from
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # USS Cygnus's sources of blocklists are very divers:
@@ -15,15 +16,15 @@ CYGNUS_IPs_LIST="${SCRIPT_DIR}/sources.ip.txt"
 # Pi-hole keeps it's own hosts list. We will absorb this into ours
 PIHOLE_GRAVITY_LIST="/etc/pihole/gravity.list"
 
-# USS Cygnus allows you're own Block list and will add it if it exists.
+# USS Cygnus allows you're own blacklist and will add it if it exists.
 CYGNUS_LOCALBLACK_LIST="${HOME}/.config/cygnus/black.list"
-# USS Cygnus allows you're personal White list
+# USS Cygnus allows you're personal whitelist
 CYGNUS_LOCALWHITE_LIST="${HOME}/.config/cygnus/white.list"
-# USS Cygnus also comes with it's own White list
+# USS Cygnus also comes with it's own whitelist
 CYGNUS_WHITE_LIST="${SCRIPT_DIR}/white.list"
 
-# Where to put the final output
-CYGNUS_OUTPUT="/tmp/USSCygnus.list"
+# Where to put the output
+CYGNUS_OUTPUT=$(mktemp /tmp/cygnus.list.XXXXXX)
 
 # A temporary file for storing the intermediate results
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
