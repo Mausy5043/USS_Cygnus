@@ -38,6 +38,8 @@ ${SCRIPT_DIR}/filter.py ${TMP_FILE}
 echo "Adding 'URL' lines..."
 wget --timeout=20 -qnv -i ${CYGNUS_URL_LIST} -O - | sed -e '/\s*#.*$/d' -e '/^\s*$/d' | cut -c8- | awk -F/ '{print $1}' >> ${TMP_FILE}
 
+# The list of IPs-to-be-avoided is not included as the DNS will not be consulted for raw IPs
+# These should be blocked at the firewall.
 #echo "Adding 'IP' lines..."
 #wget --timeout=20 -qnv -i ${CYGNUS_IPs_LIST} -O  - | sed -e '/\s*#.*$/d' -e '/^\s*$/d' >> ${TMP_FILE}
 
