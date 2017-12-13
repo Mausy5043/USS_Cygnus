@@ -15,6 +15,7 @@ CYGNUS_IPs_LIST="${SCRIPT_DIR}/sources.ip.txt"
 
 # Pi-hole keeps it's own hosts list. We will absorb this into ours
 PIHOLE_GRAVITY_LIST="/etc/pihole/gravity.list"
+# to be added: dnsmasq native methods
 
 # USS Cygnus allows you're own blacklist and will add it if it exists.
 CYGNUS_LOCALBLACK_LIST="${HOME}/.config/cygnus/black.list"
@@ -86,6 +87,7 @@ echo "Converting list to hosts format..."
 sed -i -e 's/^/0\.0\.0\.0   /' ${CYGNUS_OUTPUT}
 
 echo "Moving list into place..."
+# temporary move; while transitioning from Pi-hole to pure dnsmasq
 sudo mv ${CYGNUS_OUTPUT} ${PIHOLE_GRAVITY_LIST}
 sudo chmod +r ${PIHOLE_GRAVITY_LIST}
 sudo chown root:root ${PIHOLE_GRAVITY_LIST}
