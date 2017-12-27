@@ -2,6 +2,8 @@
 
 # Find out where we're running from
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+CYGNUS_IP4=$(ip route get 1 | awk '{print $NF;exit}')
+CYGNUS_IP6=$(ip addr show dev eth0 | sed -e's/^.*inet6 \([^ ]*\)\/.*$/\1/;t;d' | awk ' { if ( length > x ) { x = length; y = $0 } }END{ print y }')
 
 # USS Cygnus's sources of blocklists are very divers:
 # Sources that supply just a list of hostnames, one per line:
