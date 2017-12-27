@@ -93,7 +93,7 @@ mv ${TMP_FILE} ${CYGNUS_OUTPUT}
 
 # Finally the list must be converted to a hosts list: prepending 0.0.0.0<space> to each line.
 echo "Converting list to hosts format..."
-sed -i -e 's/^/0\.0\.0\.0   /' ${CYGNUS_OUTPUT}
+sed -i -e 's/^/0.0.0.0   /' ${CYGNUS_OUTPUT}
 
 echo "Moving list into place..."
 # temporary move; while transitioning from Pi-hole to pure dnsmasq
