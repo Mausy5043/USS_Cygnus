@@ -2,8 +2,16 @@
 
 # Find out where we're running from
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Get our IPv4
 CYGNUS_IP4=$(ip route get 1 | awk '{print $NF;exit}')
+# Get our IPv6
 CYGNUS_IP6=$(ip addr show dev eth0 | sed -e's/^.*inet6 \([^ ]*\)\/.*$/\1/;t;d' | awk ' { if ( length > x ) { x = length; y = $0 } }END{ print y }')
+# Use the defaults from Pi-hole if they exist
+if [[ -f /etc/pihole/setupVars.conf ]]; then
+  CYGNUS_IP4=$(grep "IPV4" /etc/pihole/setupVars.conf | awk -F "=" '{print $2}'| awk -F "/" '{print $1}')
+  CYGNUS_IP6=$(grep "IPV6" /etc/pihole/setupVars.conf | awk -F "=" '{print $2}')
+fi
+
 
 # USS Cygnus's sources of blocklists are very divers:
 # Sources that supply just a list of hostnames, one per line:
@@ -69,7 +77,6 @@ echo "zzzzzz.whitelist.test.zzzzzz" >> ${CYGNUS_OUTPUT}
 #
 # use tempfiles for fgrep, because pipes can't be used due to conditional executions
 #
-
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
 if [[ -f ${CYGNUS_WHITE_LIST} ]]; then
   echo "Applying USS Cygnus's WHITELIST..."
