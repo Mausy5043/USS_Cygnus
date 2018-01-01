@@ -55,7 +55,7 @@ def main():
             if len(si) > 0:
                 try:
                     socket.inet_aton(si[0])
-                    # OK: the first cell will be be the IP-address
+                    # OK: the first cell will be the IP-address
                     if len(si) > 1:
                         sit = si[1]
                 except socket.error:
