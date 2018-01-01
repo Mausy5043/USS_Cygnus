@@ -89,12 +89,18 @@ if [[ -f ${CYGNUS_LOCALWHITE_LIST} ]]; then
   echo "Applying the local WHITELIST..."
   fgrep -vxFf ${CYGNUS_LOCALWHITE_LIST} ${CYGNUS_OUTPUT} > ${TMP_FILE}
 fi
-mv ${TMP_FILE} ${CYGNUS_OUTPUT}
 
-# Finally the list must be converted to a hosts list: prepending IP4 to each line.
+# Finally the list must be converted to a hosts list: prepending IP4 and IP6 to each line.
 echo "Converting list to hosts format..."
-#sed -i -e "s/^/${CYGNUS_IP4}   /" ${CYGNUS_OUTPUT}
-awk '{print;print;}' ${CYGNUS_OUTPUT}
+awk -v ip4=${CYGNUS_IP4} -v ip6=${CYGNUS_IP6} '{print ip4 "  " $0;print ip6 "  " $0;}' ${TMP_FILE} > ${CYGNUS_OUTPUT}
+
+echo ""
+echo ""
+head ${CYGNUS_OUTPUT}
+echo ":"
+tail ${CYGNUS_OUTPUT}
+echo ""
+echo ""
 
 echo "Moving list into place..."
 # temporary move; while transitioning from Pi-hole to pure dnsmasq
