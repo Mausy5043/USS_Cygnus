@@ -69,12 +69,19 @@ fi
 
 ####### SHRINKING THE LIST #######
 
-echo "Removing duplicates..."
-cat ${TMP_FILE} | sort | uniq > ${CYGNUS_OUTPUT}
+# remove duplicates to reduce memory load during filtering
+echo "Removing duplicates...(1)"
+sort ${TMP_FILE} | uniq > ${CYGNUS_OUTPUT}
 rm ${TMP_FILE}
 
 echo "Filtering..."
 ${SCRIPT_DIR}/filter.py ${CYGNUS_OUTPUT}
+
+# remove residual duplicates after filtering
+TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
+echo "Removing duplicates...(2)"
+sort ${CYGNUS_OUTPUT} | uniq > ${TMP_FILE}
+mv ${TMP_FILE} ${CYGNUS_OUTPUT}
 
 # The list of IPs-to-be-avoided is not included as the DNS will not be consulted for raw IPs
 # These should be blocked at the firewall.
