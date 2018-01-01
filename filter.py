@@ -4,7 +4,7 @@ import os
 import socket
 import sys
 
-DEBUG=False
+DEBUG = False
 
 # check for presence of a CLI parameter
 if len(sys.argv) == 2:
@@ -28,7 +28,7 @@ if os.path.isfile(ifile):
     if DEBUG:
       print("   ",s)
     # check if there is something left
-    if len(s)>0:
+    if len(s) > 0:
       si = s.split()
       if DEBUG:
         print("    ",si)
@@ -36,14 +36,14 @@ if os.path.isfile(ifile):
         try:
           socket.inet_aton(si[0])
           # OK: the first cell will be be the IP-address
-          if len(si)>1:
+          if len(si) > 1:
             sit = si[1]
         except socket.error:
           # NOK: the first cell is not an IP-address
           sit = si[0]
       else:
         # lines consisting of pure whitespace are replaced by "#"; not to worry. "#" are removed later
-        sit="#"
+        sit = "#"
     else:
       # empty lines are replaced by "#"; not to worry. "#" are removed later
       sit = "#"
