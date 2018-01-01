@@ -44,7 +44,7 @@ def main():
     Main loop
     """
     newlines = []
-    ifile = get_cli_params
+    ifile = get_cli_params()
     lines = read_file(ifile)
     for line in lines:
         # remove any leading or trailing whitespace
