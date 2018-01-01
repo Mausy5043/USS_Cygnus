@@ -50,9 +50,9 @@ def main():
         # remove any leading or trailing whitespace
         s = line.strip()
         # check if there is something left
-        if s:
+        if len(s) > 0:
             si = s.split()
-            if si:
+            if len(si) > 0:
                 try:
                     socket.inet_aton(si[0])
                     # OK: the first cell will be be the IP-address
