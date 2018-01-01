@@ -93,7 +93,8 @@ mv ${TMP_FILE} ${CYGNUS_OUTPUT}
 
 # Finally the list must be converted to a hosts list: prepending IP4 to each line.
 echo "Converting list to hosts format..."
-sed -i -e "s/^/${CYGNUS_IP4}   /" ${CYGNUS_OUTPUT}
+#sed -i -e "s/^/${CYGNUS_IP4}   /" ${CYGNUS_OUTPUT}
+awk '{print;print;}' ${CYGNUS_OUTPUT}
 
 echo "Moving list into place..."
 # temporary move; while transitioning from Pi-hole to pure dnsmasq
