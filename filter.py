@@ -47,8 +47,8 @@ def main():
     ifile = get_cli_params()
     lines = read_file(ifile)
     for line in lines:
-        # remove any leading or trailing whitespace
-        s = line.strip()
+        # remove any leading or trailing whitespace and convert to lowercase
+        s = line.strip().lower()
         # check if there is something left
         if len(s) > 0:
             si = s.split()

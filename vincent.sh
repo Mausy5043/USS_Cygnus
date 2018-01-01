@@ -43,19 +43,16 @@ CYGNUS_OUTPUT=$(mktemp /tmp/cygnus.list.XXXXXX)
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
 
 
+####### GROWING THE LIST ######
+
 echo "Fetching 'flat' and '127' lines..."
 cat ${CYGNUS_FLAT_LIST} ${CYGNUS_127_LIST} | wget --timeout=20 -qnv -i - -O ${TMP_FILE}
 
-echo "Filtering..."
-${SCRIPT_DIR}/filter.py ${TMP_FILE}
-
 echo "Adding 'URL' lines..."
-wget --timeout=20 -qnv -i ${CYGNUS_URL_LIST} -O - | sed -e '/\s*#.*$/d' -e '/^\s*$/d' | cut -c8- | awk -F/ '{print $1}' >> ${TMP_FILE}
-
-# The list of IPs-to-be-avoided is not included as the DNS will not be consulted for raw IPs
-# These should be blocked at the firewall.
-#echo "Adding 'IP' lines..."
-#wget --timeout=20 -qnv -i ${CYGNUS_IPs_LIST} -O  - | sed -e '/\s*#.*$/d' -e '/^\s*$/d' >> ${TMP_FILE}
+wget --timeout=20 -qnv -i ${CYGNUS_URL_LIST} -O - |\
+  sed -e '/\s*#.*$/d' -e '/^\s*$/d' |\
+  cut -c8- |\
+  awk -F/ '{print $1}' >> ${TMP_FILE}
 
 if [[ -f ${PIHOLE_GRAVITY_LIST} ]]; then
   echo "Absorbing Pi-hole's list..."
@@ -69,32 +66,42 @@ if [[ -f ${CYGNUS_LOCALBLACK_LIST} ]]; then
   cat ${CYGNUS_LOCALBLACK_LIST} >> ${TMP_FILE}
 fi
 
-# Next we must remove any duplicates and the white-listed sites.
+
+####### SHRINKING THE LIST #######
+
 echo "Removing duplicates..."
 cat ${TMP_FILE} | sort | uniq > ${CYGNUS_OUTPUT}
-
 rm ${TMP_FILE}
-echo "zzzzzz.whitelist.test.zzzzzz" >> ${CYGNUS_OUTPUT}
 
-#
+echo "Filtering..."
+${SCRIPT_DIR}/filter.py ${CYGNUS_OUTPUT}
+
+# The list of IPs-to-be-avoided is not included as the DNS will not be consulted for raw IPs
+# These should be blocked at the firewall.
+#echo "Adding 'IP' lines..."
+#wget --timeout=20 -qnv -i ${CYGNUS_IPs_LIST} -O  - | sed -e '/\s*#.*$/d' -e '/^\s*$/d' >> ${TMP_FILE}
+
+# Next we must remove the white-listed sites.
 # use tempfiles for fgrep, because pipes can't be used due to conditional executions
-#
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
 if [[ -f ${CYGNUS_WHITE_LIST} ]]; then
   echo "Applying USS Cygnus's WHITELIST..."
   fgrep -vxFf ${CYGNUS_WHITE_LIST} ${CYGNUS_OUTPUT} > ${TMP_FILE}
+  mv ${TMP_FILE} ${CYGNUS_OUTPUT}
 fi
-mv ${TMP_FILE} ${CYGNUS_OUTPUT}
-TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
 
+TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
 if [[ -f ${CYGNUS_LOCALWHITE_LIST} ]]; then
   echo "Applying the local WHITELIST..."
   fgrep -vxFf ${CYGNUS_LOCALWHITE_LIST} ${CYGNUS_OUTPUT} > ${TMP_FILE}
+  mv ${TMP_FILE} ${CYGNUS_OUTPUT}
 fi
 
 # Finally the list must be converted to a hosts list: prepending IP4 and IP6 to each line.
 echo "Converting list to hosts format..."
-awk -v ip4=${CYGNUS_IP4} -v ip6=${CYGNUS_IP6} '{print ip4 "  " $0;print ip6 "  " $0;}' ${TMP_FILE} > ${CYGNUS_OUTPUT}
+TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
+awk -v ip4=${CYGNUS_IP4} -v ip6=${CYGNUS_IP6} '{print ip4 "  " $0;print ip6 "  " $0;}' ${CYGNUS_OUTPUT} > ${TMP_FILE}
+mv ${TMP_FILE} ${CYGNUS_OUTPUT}
 
 echo ""
 echo ""
