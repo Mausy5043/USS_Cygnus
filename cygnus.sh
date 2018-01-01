@@ -108,7 +108,7 @@ sudo mv ${CYGNUS_OUTPUT} ${PIHOLE_GRAVITY_LIST}
 sudo chmod +r ${PIHOLE_GRAVITY_LIST}
 sudo chown root:root ${PIHOLE_GRAVITY_LIST}
 
-echo "$(wc -l ${PIHOLE_GRAVITY_LIST} | awk '{print $1}/2' |bc) domains will be blocked"
+echo "$(wc -l ${PIHOLE_GRAVITY_LIST} | awk '{print $1 "/ 2"}' | bc) domains will be blocked"
 
 echo "Restarting DNS to activitate the new list..."
 sudo systemctl restart dnsmasq.service
