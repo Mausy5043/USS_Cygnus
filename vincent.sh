@@ -70,7 +70,7 @@ fi
 ####### SHRINKING THE LIST #######
 
 # remove duplicates to reduce memory load during filtering
-echo "Removing duplicates...(1)"
+echo "Removing duplicates to conserve memory...(1)"
 sort ${TMP_FILE} | uniq > ${CYGNUS_OUTPUT}
 rm ${TMP_FILE}
 
