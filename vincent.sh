@@ -93,14 +93,14 @@ mv "${TMP_FILE}" "${CYGNUS_OUTPUT}"
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
 if [[ -f "${CYGNUS_WHITE_LIST}" ]]; then
   echo "Applying USS Cygnus's WHITELIST..."
-  fgrep -vxFf "${CYGNUS_WHITE_LIST}" "${CYGNUS_OUTPUT}" > "${TMP_FILE}"
+  grep -vxFf "${CYGNUS_WHITE_LIST}" "${CYGNUS_OUTPUT}" > "${TMP_FILE}"
   mv "${TMP_FILE}" "${CYGNUS_OUTPUT}"
 fi
 
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
 if [[ -f "${CYGNUS_LOCALWHITE_LIST}" ]]; then
   echo "Applying the local WHITELIST..."
-  fgrep -vxFf "${CYGNUS_LOCALWHITE_LIST}" "${CYGNUS_OUTPUT}" > "${TMP_FILE}"
+  grep -vxFf "${CYGNUS_LOCALWHITE_LIST}" "${CYGNUS_OUTPUT}" > "${TMP_FILE}"
   mv "${TMP_FILE}" "${CYGNUS_OUTPUT}"
 fi
 
