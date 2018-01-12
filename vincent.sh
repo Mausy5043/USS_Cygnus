@@ -46,24 +46,24 @@ TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
 ####### GROWING THE LIST ######
 
 echo "Fetching 'flat' and '127' lines..."
-cat ${CYGNUS_FLAT_LIST} ${CYGNUS_127_LIST} | wget --timeout=20 -qnv -i - -O ${TMP_FILE}
+cat "${CYGNUS_FLAT_LIST}" "${CYGNUS_127_LIST}" | wget --timeout=20 -qnv -i - -O "${TMP_FILE}"
 
 echo "Adding 'URL' lines..."
-wget --timeout=20 -qnv -i ${CYGNUS_URL_LIST} -O - |\
+wget --timeout=20 -qnv -i "${CYGNUS_URL_LIST}" -O - |\
   sed -e '/\s*#.*$/d' -e '/^\s*$/d' |\
   cut -c8- |\
-  awk -F/ '{print $1}' >> ${TMP_FILE}
+  awk -F/ '{print $1}' >> "${TMP_FILE}"
 
-if [[ -f ${PIHOLE_GRAVITY_LIST} ]]; then
+if [[ -f "${PIHOLE_GRAVITY_LIST}" ]]; then
   echo "Absorbing Pi-hole's list..."
-  awk '{print $2}' ${PIHOLE_GRAVITY_LIST} >> ${TMP_FILE}
+  awk '{print $2}' "${PIHOLE_GRAVITY_LIST}" >> "${TMP_FILE}"
 fi
 
 # At this point we have a file that consolidates our own sources and the Pi-hole gravity.list
 # Now, we add the user's Black List
-if [[ -f ${CYGNUS_LOCALBLACK_LIST} ]]; then
+if [[ -f "${CYGNUS_LOCALBLACK_LIST}" ]]; then
   echo "Consolidating the local BLACKLIST..."
-  cat ${CYGNUS_LOCALBLACK_LIST} >> ${TMP_FILE}
+  cat "${CYGNUS_LOCALBLACK_LIST}" >> "${TMP_FILE}"
 fi
 
 
@@ -71,17 +71,17 @@ fi
 
 # remove duplicates to reduce memory load during filtering
 echo "Removing duplicates to conserve memory...(1)"
-sort ${TMP_FILE} | uniq > ${CYGNUS_OUTPUT}
-rm ${TMP_FILE}
+sort "${TMP_FILE}" | uniq > "${CYGNUS_OUTPUT}"
+rm "${TMP_FILE}"
 
 echo "Filtering..."
-${SCRIPT_DIR}/filter.py ${CYGNUS_OUTPUT}
+"${SCRIPT_DIR}"/filter.py "${CYGNUS_OUTPUT}"
 
 # remove residual duplicates after filtering
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
 echo "Removing duplicates...(2)"
-sort ${CYGNUS_OUTPUT} | uniq > ${TMP_FILE}
-mv ${TMP_FILE} ${CYGNUS_OUTPUT}
+sort "${CYGNUS_OUTPUT}" | uniq > "${TMP_FILE}"
+mv "${TMP_FILE}" "${CYGNUS_OUTPUT}"
 
 # The list of IPs-to-be-avoided is not included as the DNS will not be consulted for raw IPs
 # These should be blocked at the firewall.
@@ -91,38 +91,38 @@ mv ${TMP_FILE} ${CYGNUS_OUTPUT}
 # Next we must remove the white-listed sites.
 # use tempfiles for fgrep, because pipes can't be used due to conditional executions
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
-if [[ -f ${CYGNUS_WHITE_LIST} ]]; then
+if [[ -f "${CYGNUS_WHITE_LIST}" ]]; then
   echo "Applying USS Cygnus's WHITELIST..."
-  fgrep -vxFf ${CYGNUS_WHITE_LIST} ${CYGNUS_OUTPUT} > ${TMP_FILE}
-  mv ${TMP_FILE} ${CYGNUS_OUTPUT}
+  fgrep -vxFf "${CYGNUS_WHITE_LIST}" "${CYGNUS_OUTPUT}" > "${TMP_FILE}"
+  mv "${TMP_FILE}" "${CYGNUS_OUTPUT}"
 fi
 
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
-if [[ -f ${CYGNUS_LOCALWHITE_LIST} ]]; then
+if [[ -f "${CYGNUS_LOCALWHITE_LIST}" ]]; then
   echo "Applying the local WHITELIST..."
-  fgrep -vxFf ${CYGNUS_LOCALWHITE_LIST} ${CYGNUS_OUTPUT} > ${TMP_FILE}
-  mv ${TMP_FILE} ${CYGNUS_OUTPUT}
+  fgrep -vxFf "${CYGNUS_LOCALWHITE_LIST}" "${CYGNUS_OUTPUT}" > "${TMP_FILE}"
+  mv "${TMP_FILE}" "${CYGNUS_OUTPUT}"
 fi
 
 # Finally the list must be converted to a hosts list: prepending IP4 and IP6 to each line.
 echo "Converting list to hosts format..."
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
-awk -v ip4=${CYGNUS_IP4} -v ip6=${CYGNUS_IP6} '{print ip4 "  " $0;print ip6 "  " $0;}' ${CYGNUS_OUTPUT} > ${TMP_FILE}
-mv ${TMP_FILE} ${CYGNUS_OUTPUT}
+awk -v ip4="${CYGNUS_IP4}" -v ip6="${CYGNUS_IP6}" '{print ip4 "  " $0;print ip6 "  " $0;}' "${CYGNUS_OUTPUT}" > "${TMP_FILE}"
+mv "${TMP_FILE}" "${CYGNUS_OUTPUT}"
 
 echo ""
 echo ""
-head ${CYGNUS_OUTPUT}
+head "${CYGNUS_OUTPUT}"
 echo ":"
-tail ${CYGNUS_OUTPUT}
+tail "${CYGNUS_OUTPUT}"
 echo ""
 echo ""
 
 echo "Moving list into place..."
 # temporary move; while transitioning from Pi-hole to pure dnsmasq
-sudo mv ${CYGNUS_OUTPUT} ${PIHOLE_GRAVITY_LIST}
-sudo chmod +r ${PIHOLE_GRAVITY_LIST}
-sudo chown root:root ${PIHOLE_GRAVITY_LIST}
+sudo mv "${CYGNUS_OUTPUT}" "${PIHOLE_GRAVITY_LIST}"
+sudo chmod +r "${PIHOLE_GRAVITY_LIST}"
+sudo chown root:root "${PIHOLE_GRAVITY_LIST}"
 
 echo "$(wc -l ${PIHOLE_GRAVITY_LIST} | awk '{print $1 "/ 2"}' | bc) domains will be blocked"
 
