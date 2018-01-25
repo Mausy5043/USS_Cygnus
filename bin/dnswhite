@@ -1,30 +1,27 @@
 #!/bin/bash
+source include
 
 sitetoremove=${1}
-#prestring="0\.0\.0\.0\ \ \ "
-prestring4="192\.168\.178\.5"
-prestring6="2001:985:509c:1:f519:c4d9:e265:821"
-whiteout4="${prestring4}  ${sitetoremove}$"
-whiteout6="${prestring6}  ${sitetoremove}$"
-PIHOLE_GRAVITY_LIST="/etc/pihole/gravity.list"
+whiteout4="${BLACKHOLE_IP4_REGEX}  ${sitetoremove}$"
+whiteout6="${BLACKHOLE_IP6_REGEX}  ${sitetoremove}$"
 TMP_FILE4=$(mktemp /tmp/dnswhite.4.XXXXXX)
 TMP_FILE6=$(mktemp /tmp/dnswhite.6.XXXXXX)
 
 echo "Matches found:"
-egrep "${whiteout4}" ${PIHOLE_GRAVITY_LIST}
-egrep "${whiteout6}" ${PIHOLE_GRAVITY_LIST}
+egrep "${whiteout4}" "${BLACKLIST}"
+egrep "${whiteout6}" "${BLACKLIST}"
 
 #Remember this whiteout
 echo ${sitetoremove} >> ~/.config/cygnus/white.list
 
 # Perform whiteout
-egrep -v "${whiteout4}" ${PIHOLE_GRAVITY_LIST} > ${TMP_FILE4}
+egrep -v "${whiteout4}" "${BLACKLIST}" > ${TMP_FILE4}
 egrep -v "${whiteout6}" ${TMP_FILE4} > ${TMP_FILE6}
-sudo mv ${PIHOLE_GRAVITY_LIST} ${PIHOLE_GRAVITY_LIST}.bak
-sudo mv $TMP_FILE6 ${PIHOLE_GRAVITY_LIST}
+sudo mv "${BLACKLIST}" "${BLACKLIST}.bak"
+sudo mv $TMP_FILE6 "${BLACKLIST}"
 sudo rm $TMP_FILE4
-sudo chmod +r ${PIHOLE_GRAVITY_LIST}
-sudo chown root:root ${PIHOLE_GRAVITY_LIST}
+sudo chmod +r "${BLACKLIST}"
+sudo chown root:root "${BLACKLIST}"
 
 sudo systemctl restart dnsmasq.service
 sudo systemctl restart pihole-FTL.service
