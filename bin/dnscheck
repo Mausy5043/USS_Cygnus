@@ -1,3 +1,4 @@
 #!/bin/bash
 source include
+
 grep $1 "${BLACKLIST}"
