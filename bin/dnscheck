@@ -1,3 +1,3 @@
 #!/bin/bash
-
-grep $1 /etc/pihole/gravity.list
+source include
+grep $1 $BLACKLIST
