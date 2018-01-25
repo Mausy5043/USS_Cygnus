@@ -1,6 +1,8 @@
 #!/bin/bash
 source include
 
+mkdir -p ~/.config/cygnus
+
 sitetoremove=${1}
 whiteout4="${BLACKHOLE_IP4_REGEX}  ${sitetoremove}$"
 whiteout6="${BLACKHOLE_IP6_REGEX}  ${sitetoremove}$"
