@@ -23,5 +23,4 @@ sudo rm $TMP_FILE4
 sudo chmod +r "${BLACKLIST}"
 sudo chown root:root "${BLACKLIST}"
 
-sudo systemctl restart dnsmasq.service
-sudo systemctl restart pihole-FTL.service
+sudo pluginctl dns
