@@ -1,0 +1,12 @@
+#!/bin/bash
+
+IP="0\.0\.0\.0"
+IP="192\.168\.178\.5"
+
+#cat /var/log/pihole.log | grep  "is 0\.0\.0\.0"
+cat /var/log/pihole.log | grep  "is ${IP}"
+echo ""
+echo "Tracking LIVE (^C to abort)"
+echo ""
+#tail -f /var/log/pihole.log | grep --color -E "is 0\.0\.0\.0"
+tail -f /var/log/pihole.log | grep --color -E "is ${IP}"
