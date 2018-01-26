@@ -1,0 +1,28 @@
+#!/bin/bash
+source include
+
+mkdir -p ~/.config/cygnus
+
+SITE_TO_BLOCK=${1}
+whiteout4="${BLACKHOLE_IP4_REGEX} ${SITE_TO_BLOCK}$"
+whiteout6="${BLACKHOLE_IP6_REGEX} ${SITE_TO_BLOCK}$"
+TMP_FILE4=$(mktemp /tmp/dnsblack.4.XXXXXX)
+TMP_FILE6=$(mktemp /tmp/dnsblack.6.XXXXXX)
+
+echo "Matches found:"
+grep -E "${whiteout4}" "${BLACKLIST}"
+grep -E "${whiteout6}" "${BLACKLIST}"
+
+#Remember this whiteout
+echo ${SITE_TO_BLOCK} >> ~/.config/cygnus/black.list
+
+# Perform whiteout
+grep -vE "${whiteout4}" "${BLACKLIST}" > "${TMP_FILE4}"
+grep -vE "${whiteout6}" "${TMP_FILE4}" > "${TMP_FILE6}"
+sudo mv "${BLACKLIST}" "${BLACKLIST}.bak"
+sudo mv $TMP_FILE6 "${BLACKLIST}"
+sudo rm $TMP_FILE4
+sudo chmod +r "${BLACKLIST}"
+sudo chown root:root "${BLACKLIST}"
+
+sudo pluginctl dns
