@@ -1,4 +1,8 @@
 #!/bin/bash
-source include
 
-grep $1 "${BLACKLIST}"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# shellcheck source=/dev/null
+source "${DIR}/include"
+
+grep "${1}" "${BLACKLIST}"
