@@ -3,25 +3,25 @@ source include
 
 mkdir -p ~/.config/cygnus
 
-sitetoremove=${1}
-whiteout4="${BLACKHOLE_IP4_REGEX}  ${sitetoremove}$"
-whiteout6="${BLACKHOLE_IP6_REGEX}  ${sitetoremove}$"
+SITE_TO_ALLOW="${1}"
+whiteout4="${BLACKHOLE_IP4_REGEX}  ${SITE_TO_ALLOW}$"
+whiteout6="${BLACKHOLE_IP6_REGEX}  ${SITE_TO_ALLOW}$"
 TMP_FILE4=$(mktemp /tmp/dnswhite.4.XXXXXX)
 TMP_FILE6=$(mktemp /tmp/dnswhite.6.XXXXXX)
 
 echo "Matches found:"
-egrep "${whiteout4}" "${BLACKLIST}"
-egrep "${whiteout6}" "${BLACKLIST}"
+grep -E "${whiteout4}" "${BLACKLIST}"
+grep -E "${whiteout6}" "${BLACKLIST}"
 
 #Remember this whiteout
-echo ${sitetoremove} >> ~/.config/cygnus/white.list
+echo "${SITE_TO_ALLOW}" >> ~/.config/cygnus/white.list
 
 # Perform whiteout
-egrep -v "${whiteout4}" "${BLACKLIST}" > ${TMP_FILE4}
-egrep -v "${whiteout6}" ${TMP_FILE4} > ${TMP_FILE6}
+grep -vE "${whiteout4}" "${BLACKLIST}" > "${TMP_FILE4}"
+grep -vE "${whiteout6}" "${TMP_FILE4}" > "${TMP_FILE6}"
 sudo mv "${BLACKLIST}" "${BLACKLIST}.bak"
-sudo mv $TMP_FILE6 "${BLACKLIST}"
-sudo rm $TMP_FILE4
+sudo mv "$TMP_FILE6" "${BLACKLIST}"
+sudo rm "$TMP_FILE4"
 sudo chmod +r "${BLACKLIST}"
 sudo chown root:root "${BLACKLIST}"
 
