@@ -28,7 +28,7 @@ grep -vE "${whiteout6}" "${TMP_FILE4}" > "${TMP_FILE6}"
 sudo mv "${BLACKLIST}" "${BLACKLIST}.bak"
 sudo mv "$TMP_FILE6" "${BLACKLIST}"
 sudo rm "$TMP_FILE4"
-sudo chmod +r "${BLACKLIST}"
-sudo chown root:root "${BLACKLIST}"
+sudo chmod 774 "${BLACKLIST}"
+sudo chown root:wheel "${BLACKLIST}"
 
 sudo pluginctl dns
