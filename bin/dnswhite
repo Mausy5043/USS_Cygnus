@@ -10,21 +10,21 @@ if [[ ! -d "${CYGNUS_CONFIG_DIR}" ]]; then
     mkdir -p "${CYGNUS_CONFIG_DIR}"
 fi
 
-whiteout4="${BLACKHOLE_IP4_REGEX} ${SITE_TO_ALLOW}$"
-whiteout6="${BLACKHOLE_IP6_REGEX} ${SITE_TO_ALLOW}$"
+ALLOWREGEX4="${BLACKHOLE_IP4_REGEX}  ${SITE_TO_ALLOW}$"
+ALLOWREGEX6="${BLACKHOLE_IP6_REGEX}  ${SITE_TO_ALLOW}$"
 TMP_FILE4=$(mktemp /tmp/dnswhite.4.XXXXXX)
 TMP_FILE6=$(mktemp /tmp/dnswhite.6.XXXXXX)
 
 echo "Matches found:"
-grep -E "${whiteout4}" "${BLACKLIST}"
-grep -E "${whiteout6}" "${BLACKLIST}"
+grep -E "${ALLOWREGEX4}" "${BLACKLIST}"
+grep -E "${ALLOWREGEX6}" "${BLACKLIST}"
 
-# Remember this whiteout
-echo "${SITE_TO_ALLOW}" >> ~/.config/cygnus/white.list
+# Remember this site
+echo "${SITE_TO_ALLOW}" >> "${CYGNUS_CONFIG_DIR}/white.list"
 
 # Remove from blacklist
-grep -vE "${whiteout4}" "${BLACKLIST}" > "${TMP_FILE4}"
-grep -vE "${whiteout6}" "${TMP_FILE4}" > "${TMP_FILE6}"
+grep -vE "${ALLOWREGEX4}" "${BLACKLIST}" > "${TMP_FILE4}"
+grep -vE "${ALLOWREGEX6}" "${TMP_FILE4}" > "${TMP_FILE6}"
 sudo mv "${BLACKLIST}" "${BLACKLIST}.bak"
 sudo mv "$TMP_FILE6" "${BLACKLIST}"
 sudo rm "$TMP_FILE4"
