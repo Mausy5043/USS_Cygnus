@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 """
 filter.py
@@ -9,7 +8,7 @@ filter a hosts file, removing useless lines
 import os
 import socket
 import sys
-
+enc = sys.getdefaultencoding()
 
 def get_cli_params():
     """
@@ -27,16 +26,16 @@ def read_file(file_to_read_from):
     """
     if not os.path.isfile(file_to_read_from):
         sys.exit(0)
-    with open(file_to_read_from, 'r') as f:
+    with open(file_to_read_from, 'r', encoding=enc) as fi:
         # read the inputfile
-        return f.read().splitlines()
+        return fi.read().splitlines()
 
 def write_file(file_to_write_to, lines_to_write):
     """
     Output <lines_to_write> to the file <file_to_write_to>
     Will overwrite existing file
     """
-    with open(file_to_write_to, 'w') as fo:
+    with open(file_to_write_to, 'w', encoding=enc) as fo:
         for line in lines_to_write:
             fo.write('{0}\n'.format(line))
 
@@ -76,9 +75,7 @@ def main():
             newlines.append(site)
     newlines.sort()
 
-    with open(ifile, 'w') as fo:
-        for site in newlines:
-            fo.write('{0}\n'.format(site))
+    write_file(ifile, newlines)
 
 
 if __name__ == '__main__':
