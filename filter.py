@@ -41,6 +41,7 @@ def write_file(file_to_write_to, lines_to_write):
 
 def flatten(line):
     fields = line.split()
+    sitename = "#"
     if len(fields) > 0:
         try:
             socket.inet_aton(fields[0])
@@ -69,7 +70,7 @@ def main():
         s = line.strip().lower()
         # check if there is something left
         if len(s) > 0:
-            flatten(s)
+            sit = flatten(s)
         else:
             # empty lines are replaced by "#"
             # not to worry. "#" are removed later
