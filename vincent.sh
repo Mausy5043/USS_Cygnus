@@ -59,7 +59,7 @@ sort "${TMP_FILE}" | uniq > "${CYGNUS_OUTPUT}"
 rm "${TMP_FILE}"
 
 echo "Filtering..."
-"${SCRIPT_DIR}"/filter.py "${CYGNUS_OUTPUT}" || echo "\n\nAAARGH!!!\n\n"; exit 1
+"${SCRIPT_DIR}"/filter.py "${CYGNUS_OUTPUT}" || echo "*** AAARGH!!! ***"; exit 1
 
 # remove residual duplicates after filtering
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
