@@ -1,15 +1,17 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+SITE_TO_ALLOW="${1}"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
 # shellcheck source=/dev/null
 source "${DIR}/include"
 
-mkdir -p ~/.config/cygnus
+if [[ ! -d "${CYGNUS_CONFIG_DIR}" ]]; then
+    mkdir -p "${CYGNUS_CONFIG_DIR}"
+fi
 
-SITE_TO_ALLOW="${1}"
-whiteout4="${BLACKHOLE_IP4_REGEX}  ${SITE_TO_ALLOW}$"
-whiteout6="${BLACKHOLE_IP6_REGEX}  ${SITE_TO_ALLOW}$"
+whiteout4="${BLACKHOLE_IP4_REGEX} ${SITE_TO_ALLOW}$"
+whiteout6="${BLACKHOLE_IP6_REGEX} ${SITE_TO_ALLOW}$"
 TMP_FILE4=$(mktemp /tmp/dnswhite.4.XXXXXX)
 TMP_FILE6=$(mktemp /tmp/dnswhite.6.XXXXXX)
 
@@ -17,10 +19,10 @@ echo "Matches found:"
 grep -E "${whiteout4}" "${BLACKLIST}"
 grep -E "${whiteout6}" "${BLACKLIST}"
 
-#Remember this whiteout
+# Remember this whiteout
 echo "${SITE_TO_ALLOW}" >> ~/.config/cygnus/white.list
 
-# Perform whiteout
+# Remove from blacklist
 grep -vE "${whiteout4}" "${BLACKLIST}" > "${TMP_FILE4}"
 grep -vE "${whiteout6}" "${TMP_FILE4}" > "${TMP_FILE6}"
 sudo mv "${BLACKLIST}" "${BLACKLIST}.bak"
