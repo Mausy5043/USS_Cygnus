@@ -19,7 +19,7 @@ cat "${BLACKLIST}" > "${TMP_FILE}"
 echo "${BLOCKRULE4}" >> "${TMP_FILE}"
 echo "${BLOCKRULE6}" >> "${TMP_FILE}"
 sudo mv "${BLACKLIST}" "${BLACKLIST}.bak"
-sudo mv $TMP_FILE "${BLACKLIST}"
+sudo mv "${TMP_FILE}" "${BLACKLIST}"
 
 sudo chmod 744 "${BLACKLIST}"
 sudo chown root:wheel "${BLACKLIST}"
