@@ -3,7 +3,8 @@ BLACKHOLE_IP4="0.0.0.0"
 BLACKHOLE_IP6="::1"
 BLACKHOLE_IP4_REGEX="0\.0\.0\.0"
 BLACKHOLE_IP6_REGEX="::1"
-BLACKLIST="/usr/local/etc/dnsmasq.d/black.list"
+# for testing purposes we use an unused file
+BLACKLIST="/usr/local/etc/dnsmasq.d/black.tsil"
 BLACKLOG="/var/log/dnsmasq.log"
 
 CYGNUS_CONFIG_DIR="${HOME}/.config/cygnus"
