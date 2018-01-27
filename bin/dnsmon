@@ -4,8 +4,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # shellcheck source=/dev/null
 source "${DIR}/include"
 
-grep  -E "is ${BLACKHOLE_IP4_REGEX}" "${BLACKLIST}"
+clog "${BLACKLOG}" | grep  -E "is ${BLACKHOLE_IP4_REGEX}"
 echo ""
 echo "Tracking LIVE (^C to abort)"
 echo ""
-tail -f "${BLACKLIST}" | grep --color -E "is ${BLACKHOLE_IP4_REGEX}"
+clog -f "${BLACKLOG}" | grep --color -E "is ${BLACKHOLE_IP4_REGEX}"
