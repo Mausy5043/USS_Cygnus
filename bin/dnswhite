@@ -2,9 +2,9 @@
 
 SITE_TO_ALLOW="${1}"
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # shellcheck source=/dev/null
-source "${DIR}/include"
+source "${SCRIPT_DIR}/include"
 
 if [[ ! -d "${CYGNUS_CONFIG_DIR}" ]]; then
     mkdir -p "${CYGNUS_CONFIG_DIR}"

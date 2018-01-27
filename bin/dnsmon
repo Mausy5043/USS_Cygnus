@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # shellcheck source=/dev/null
-source "${DIR}/include"
+source "${SCRIPT_DIR}/include"
 
 sudo clog "${BLACKLOG}" | grep  -E "is ${BLACKHOLE_IP4_REGEX}"
 echo ""
