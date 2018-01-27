@@ -22,7 +22,7 @@ def get_cli_params():
 def read_file(file_to_read_from):
     """
     Return the contents of a file if it exists
-    Abort if it doesn't exists
+    Abort if it doesn't exist
     """
     if not os.path.isfile(file_to_read_from):
         sys.exit(0)
