@@ -11,7 +11,7 @@ fi
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-source bin/include
+source "${DIR}/bin/include"
 
 pushd "${DIR}" || exit 1
   # shellcheck disable=SC1091
