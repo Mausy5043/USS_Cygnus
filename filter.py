@@ -39,6 +39,24 @@ def write_file(file_to_write_to, lines_to_write):
         for line in lines_to_write:
             fo.write('{0}\n'.format(line))
 
+def flatten(line):
+    fields = line.split()
+    if len(fields) > 0:
+        try:
+            socket.inet_aton(fields[0])
+            # OK: the first cell is formatted as an IP-address
+            if len(fields) > 1:
+                sitename = fields[1]
+        except socket.error:
+            # NOK: the first cell is not an IP-address
+            sitename = fields[0]
+    else:
+        # lines consisting of pure whitespace are replaced by "#"
+        # not to worry. "#" are removed later
+        sitename = "#"
+    return sitename
+
+
 def main():
     """
     Main loop
@@ -51,20 +69,7 @@ def main():
         s = line.strip().lower()
         # check if there is something left
         if len(s) > 0:
-            si = s.split()
-            if len(si) > 0:
-                try:
-                    socket.inet_aton(si[0])
-                    # OK: the first cell will be the IP-address
-                    if len(si) > 1:
-                        sit = si[1]
-                except socket.error:
-                    # NOK: the first cell is not an IP-address
-                    sit = si[0]
-            else:
-                # lines consisting of pure whitespace are replaced by "#"
-                # not to worry. "#" are removed later
-                sit = "#"
+            flatten(s)
         else:
             # empty lines are replaced by "#"
             # not to worry. "#" are removed later
