@@ -34,10 +34,10 @@ TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
 ####### GROWING THE LIST ######
 
 echo "Fetching 'flat' and '127' lines..."
-cat "${CYGNUS_FLAT_LIST}" "${CYGNUS_127_LIST}" | wget --timeout=20 -nv -i - -O "${TMP_FILE}"
+cat "${CYGNUS_FLAT_LIST}" "${CYGNUS_127_LIST}" | wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv -i - -O "${TMP_FILE}"
 
 echo "Adding 'URL' lines..."
-wget --timeout=20 -nv -i "${CYGNUS_URL_LIST}" -O - |\
+wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv -i "${CYGNUS_URL_LIST}" -O - |\
   sed -e '/\s*#.*$/d' -e '/^\s*$/d' |\
   cut -c8- |\
   awk -F/ '{print $1}' >> "${TMP_FILE}"
