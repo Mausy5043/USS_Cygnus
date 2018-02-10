@@ -19,9 +19,9 @@ CYGNUS_IPs_LIST="${SCRIPT_DIR}/sources.ip.txt"
 
 # USS Cygnus allows your own blacklist and will add it if it exists.
 CYGNUS_LOCALBLACK_LIST="${CYGNUS_CONFIG_DIR}/black.list"
-# USS Cygnus allows your personal whitelist
+# USS Cygnus allows your personal whitelist and will process this last of all.
 CYGNUS_LOCALWHITE_LIST="${CYGNUS_CONFIG_DIR}/white.list"
-# USS Cygnus also comes with it's own whitelist
+# USS Cygnus also comes with it's own whitelist to ensure the source sites don't get blocked
 CYGNUS_WHITE_LIST="${SCRIPT_DIR}/white.list"
 
 # Where to put the output
