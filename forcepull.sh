@@ -2,11 +2,11 @@
 
 HOSTNAME=$(hostname)
 
-if [[ ! -f "${HOME}/.cygnus.branch" ]]; then
-  echo "${HOME}/.cygnus.branch not set!"
+if [[ ! -f "${HOME}/.config/cygnus/branch" ]]; then
+  echo "${HOME}/.config/cygnus/branch not set!"
   exit 1
 else
-  BRANCH=$( cat "${HOME}/.cygnus.branch" )
+  BRANCH=$( cat "${HOME}/.config/cygnus/branch" )
 fi
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
