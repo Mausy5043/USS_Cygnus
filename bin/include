@@ -1,8 +1,8 @@
 # include
 BLACKHOLE_IP4="0.0.0.0"
-BLACKHOLE_IP6="::1"
+BLACKHOLE_IP6="::"
 BLACKHOLE_IP4_REGEX="0\.0\.0\.0"
-BLACKHOLE_IP6_REGEX="::1"
+BLACKHOLE_IP6_REGEX="::"
 BLACKLIST="/usr/local/etc/dnsmasq.d/black.list"
 BLACKLOG="/var/log/dnsmasq.log"
 
