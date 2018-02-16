@@ -4,7 +4,7 @@ BLACKHOLE_IP6="::"
 BLACKHOLE_IP4_REGEX="0\.0\.0\.0"
 BLACKHOLE_IP6_REGEX="::"
 BLACKLIST="/usr/local/etc/dnsmasq.d/black.list"
-BLACKHOSTSLIST="/usr/local/etc/dnsmasq.d/hosts.list"
+BLACKHOSTSLIST="/usr/local/etc/dnsmasq.d/black.list"
 BLACKDOMSLIST="/usr/local/etc/dnsmasq.d/domains.conf"
 BLACKLOG="/var/log/dnsmasq.log"
 
