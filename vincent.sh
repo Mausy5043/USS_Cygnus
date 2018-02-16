@@ -37,8 +37,8 @@ BLOCKED_DOMS_URL="https://raw.githubusercontent.com/notracking/hosts-blocklists/
 
 ####### GROWING THE LIST ######
 
-wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv -i "${BLOCKED_HOSTS_URL}" -O "${TMP_HOSTS}"
-wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv -i "${BLOCKED_DOMS_URL}" -O "${TMP_DOMAINS}"
+wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv "${BLOCKED_HOSTS_URL}" -O "${TMP_HOSTS}"
+wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv "${BLOCKED_DOMS_URL}" -O "${TMP_DOMAINS}"
 
 echo "Moving lists into place..."
 sudo mv "${BLACKHOSTSLIST}" "${BLACKHOSTSLIST}.bak"
