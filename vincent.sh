@@ -40,7 +40,27 @@ BLOCKED_DOMS_URL="https://raw.githubusercontent.com/notracking/hosts-blocklists/
 wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv -i "${BLOCKED_HOSTS_URL}" -O "${TMP_HOSTS}"
 wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv -i "${BLOCKED_DOMS_URL}" -O "${TMP_DOMAINS}"
 
+echo "Moving lists into place..."
+sudo mv "${BLACKHOSTSLIST}" "${BLACKHOSTSLIST}.bak"
+sudo mv "${TMP_HOSTS}" "${BLACKHOSTSLIST}"
+sudo chmod 744 "${BLACKHOSTSLIST}"
+sudo chown root:wheel "${BLACKHOSTSLIST}"
+
+sudo mv "${BLACKDOMSLIST}" "${BLACKDOMSLIST}.bak"
+sudo mv "${TMP_DOMAINS}" "${BLACKDOMSLIST}"
+sudo chmod 744 "${BLACKDOMSLIST}"
+sudo chown root:wheel "${BLACKDOMSLIST}"
+
+echo "$(wc -l ${BLACKHOSTSLIST} | awk '{print $1 "/ 2"}' | bc) hosts will be blocked"
+echo "$(wc -l ${BLACKDOMSLIST}  | awk '{print $1 "/ 2"}' | bc) domains will be blocked"
+
+echo "Restarting DNS to activitate the new lists..."
+
+sudo pluginctl dns
+
 exit 0
+
+
 echo "Fetching 'flat' and '127' lines..."
 cat "${CYGNUS_FLAT_LIST}" "${CYGNUS_127_LIST}" | wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv -i - -O "${TMP_FILE}"
 
