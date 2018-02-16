@@ -30,9 +30,17 @@ CYGNUS_OUTPUT=$(mktemp /tmp/cygnus.list.XXXXXX)
 # A temporary file for storing the intermediate results
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
 
+TMP_HOSTS=$(mktemp /tmp/cygnus.XXXXXX)
+TMP_DOMAINS=$(mktemp /tmp/cygnus.XXXXXX)
+BLOCKED_HOSTS_URL="https://raw.githubusercontent.com/notracking/hosts-blocklists/master/hostnames.txt"
+BLOCKED_DOMS_URL="https://raw.githubusercontent.com/notracking/hosts-blocklists/master/domains.txt"
 
 ####### GROWING THE LIST ######
 
+wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv -i "${BLOCKED_HOSTS_URL}" -O "${TMP_HOSTS}"
+wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv -i "${BLOCKED_DOMS_URL}" -O "${TMP_DOMAINS}"
+
+exit 0
 echo "Fetching 'flat' and '127' lines..."
 cat "${CYGNUS_FLAT_LIST}" "${CYGNUS_127_LIST}" | wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv -i - -O "${TMP_FILE}"
 
