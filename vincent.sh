@@ -19,6 +19,8 @@ CYGNUS_IPs_LIST="${SCRIPT_DIR}/sources.ip.txt"
 
 # USS Cygnus allows your own blacklist and will add it if it exists.
 CYGNUS_LOCALBLACK_LIST="${CYGNUS_CONFIG_DIR}/black.list"
+# USS Cygnus allows your own blacklisted domains and will add it if it exists.
+CYGNUS_LOCALBLACKDOMS_LIST="${CYGNUS_CONFIG_DIR}/black.domains"
 # USS Cygnus allows your personal whitelist and will process this last of all.
 CYGNUS_LOCALWHITE_LIST="${CYGNUS_CONFIG_DIR}/white.list"
 # USS Cygnus also comes with it's own whitelist to ensure the source sites don't get blocked
@@ -37,8 +39,20 @@ BLOCKED_DOMS_URL="https://raw.githubusercontent.com/notracking/hosts-blocklists/
 
 ####### GROWING THE LIST ######
 
-wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv "${BLOCKED_HOSTS_URL}" -O "${TMP_HOSTS}"
-wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv "${BLOCKED_DOMS_URL}" -O "${TMP_DOMAINS}"
+wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv "${BLOCKED_HOSTS_URL}" -O "${TMP_HOSTS}" || exit 1
+wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv "${BLOCKED_DOMS_URL}" -O "${TMP_DOMAINS}" || exit 1
+
+# Now, we add the user's black.List
+if [[ -f "${CYGNUS_LOCALBLACK_LIST}" ]]; then
+  echo "Consolidating the local BLACKLIST..."
+  cat "${CYGNUS_LOCALBLACK_LIST}" >> "${TMP_HOSTS}"
+fi
+
+# Now, we add the user's black.domains
+if [[ -f "${CYGNUS_LOCALBLACKDOMS_LIST}" ]]; then
+  echo "Consolidating the local BLACKLISTED DOMAINS..."
+  cat "${CYGNUS_LOCALBLACKDOMS_LIST}" >> "${TMP_DOMAINS}"
+fi
 
 echo "Moving lists into place..."
 sudo mv "${BLACKHOSTSLIST}" "${BLACKHOSTSLIST}.bak"
@@ -61,23 +75,6 @@ sudo pluginctl dns
 exit 0
 
 
-echo "Fetching 'flat' and '127' lines..."
-cat "${CYGNUS_FLAT_LIST}" "${CYGNUS_127_LIST}" | wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv -i - -O "${TMP_FILE}"
-
-echo "Adding 'URL' lines..."
-wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv -i "${CYGNUS_URL_LIST}" -O - |\
-  sed -e '/\s*#.*$/d' -e '/^\s*$/d' |\
-  cut -c8- |\
-  awk -F/ '{print $1}' >> "${TMP_FILE}"
-
-
-# At this point we have a file that consolidates all our sources.
-# Now, we add the user's Black List
-if [[ -f "${CYGNUS_LOCALBLACK_LIST}" ]]; then
-  echo "Consolidating the local BLACKLIST..."
-  cat "${CYGNUS_LOCALBLACK_LIST}" >> "${TMP_FILE}"
-fi
-
 
 ####### SHRINKING THE LIST #######
 
@@ -95,10 +92,6 @@ echo "Removing duplicates...(2)"
 sort "${CYGNUS_OUTPUT}" | uniq > "${TMP_FILE}"
 mv "${TMP_FILE}" "${CYGNUS_OUTPUT}"
 
-# The list of IPs-to-be-avoided is not included as the DNS will not be consulted for raw IPs
-# These should be blocked at the firewall.
-#echo "Adding 'IP' lines..."
-#wget --timeout=20 -qnv -i ${CYGNUS_IPs_LIST} -O  - | sed -e '/\s*#.*$/d' -e '/^\s*$/d' >> ${TMP_FILE}
 
 # Next we will remove the white-listed sites.
 # use tempfiles for fgrep, because pipes can't be used due to conditional executions
@@ -130,15 +123,3 @@ tail "${CYGNUS_OUTPUT}"
 echo ""
 echo ""
 
-echo "Moving list into place..."
-sudo mv "${BLACKLIST}" "${BLACKLIST}.bak"
-sudo mv "${CYGNUS_OUTPUT}" "${BLACKLIST}"
-
-sudo chmod 744 "${BLACKLIST}"
-sudo chown root:wheel "${BLACKLIST}"
-
-echo "$(wc -l ${BLACKLIST} | awk '{print $1 "/ 2"}' | bc) domains will be blocked"
-
-echo "Restarting DNS to activitate the new list..."
-
-sudo pluginctl dns
