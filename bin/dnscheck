@@ -4,4 +4,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # shellcheck source=/dev/null
 source "${SCRIPT_DIR}/include"
 
-grep -E "${1}" "${BLACKLIST}"
+echo "Matching hosts:"
+grep -E "${1}" "${BLACKHOSTSLIST}"
+echo "Matching domains:"
+grep -E "${1}" "${BLACKDOMSLIST}"
