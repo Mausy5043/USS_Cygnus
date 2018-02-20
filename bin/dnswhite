@@ -10,27 +10,41 @@ if [[ ! -d "${CYGNUS_CONFIG_DIR}" ]]; then
     mkdir -p "${CYGNUS_CONFIG_DIR}"
 fi
 
-ALLOWREGEX4="${BLACKHOLE_IP4_REGEX}  ${SITE_TO_ALLOW}$"
-ALLOWREGEX6="${BLACKHOLE_IP6_REGEX}  ${SITE_TO_ALLOW}$"
+ALLOWREGEX4="${BLACKHOLE_IP4_REGEX} ${SITE_TO_ALLOW}$"
+ALLOWREGEX6="${BLACKHOLE_IP6_REGEX} ${SITE_TO_ALLOW}$"
+#test000007.ru
+
+echo "Matching hosts:"
+grep -E "${ALLOWREGEX4}" "${BLACKHOSTSLIST}"
+grep -E "${ALLOWREGEX6}" "${BLACKHOSTSLIST}"
+echo ""
+echo "Matching domains:"
+grep -E "${ALLOWREGEX4}" "${BLACKDOMSLIST}"
+grep -E "${ALLOWREGEX6}" "${BLACKDOMSLIST}"
+
+exit 1
+
+# Remove from sites blacklist
 TMP_FILE4=$(mktemp /tmp/dnswhite.4.XXXXXX)
 TMP_FILE6=$(mktemp /tmp/dnswhite.6.XXXXXX)
+grep -vE "${ALLOWREGEX4}" "${BLACKHOSTSLIST}" > "${TMP_FILE4}"
+grep -vE "${ALLOWREGEX6}" "${TMP_FILE4}" > "${TMP_FILE6}"
+sudo mv "${TMP_FILE6}" "${BLACKHOSTSLIST}"
+sudo rm "${TMP_FILE4}"
+sudo chmod 744 "${BLACKHOSTSLIST}"
+sudo chown root:wheel "${BLACKHOSTSLIST}"
 
-echo "Matches found:"
-grep -E "${ALLOWREGEX4}" "${BLACKLIST}"
-grep -E "${ALLOWREGEX6}" "${BLACKLIST}"
+# Remove from domains blocklist
+TMP_FILE4=$(mktemp /tmp/dnswhite.4.XXXXXX)
+TMP_FILE6=$(mktemp /tmp/dnswhite.6.XXXXXX)
+grep -vE "${ALLOWREGEX4}" "${BLACKDOMSLIST}" > "${TMP_FILE4}"
+grep -vE "${ALLOWREGEX6}" "${TMP_FILE4}" > "${TMP_FILE6}"
+sudo mv "${TMP_FILE6}" "${BLACKDOMSLIST}"
+sudo rm "${TMP_FILE4}"
+sudo chmod 744 "${BLACKDOMSLIST}"
+sudo chown root:wheel "${BLACKDOMSLIST}"
 
 # Remember this site
 echo "${SITE_TO_ALLOW}" >> "${CYGNUS_CONFIG_DIR}/white.list"
-
-# Remove from blacklist
-grep -vE "${ALLOWREGEX4}" "${BLACKLIST}" > "${TMP_FILE4}"
-grep -vE "${ALLOWREGEX6}" "${TMP_FILE4}" > "${TMP_FILE6}"
-
-sudo mv "${BLACKLIST}" "${BLACKLIST}.bak"
-sudo mv "${TMP_FILE6}" "${BLACKLIST}"
-sudo rm "${TMP_FILE4}"
-
-sudo chmod 744 "${BLACKLIST}"
-sudo chown root:wheel "${BLACKLIST}"
 
 sudo pluginctl dns
