@@ -2,21 +2,39 @@
 127.0.0.1
 127.0.1.1
 ::1
-adaway.org
-adblock.mahakala.is
-android.clients.google.com
-clients1.google.com
-jansal.googlecode.com
-malwaredomains.lehigh.edu
-mirror1.malwaredomains.com
-pgl.yoyo.org
-ransomwaretracker.abuse.ch
-raw.githubusercontent.com
-s3.amazonaws.com
-smokingwheels.github.io
-someonewhocares.org
-sysctl.org
-winhelp2002.mvps.org
-www.fussle.de
-www.malwaredomainlist.com
-zeustracker.abuse.ch
+0.0.0.0 adaway.org
+0.0.0.0 adblock.mahakala.is
+0.0.0.0 android.clients.google.com
+0.0.0.0 clients1.google.com
+0.0.0.0 jansal.googlecode.com
+0.0.0.0 malwaredomains.lehigh.edu
+0.0.0.0 mirror1.malwaredomains.com
+0.0.0.0 pgl.yoyo.org
+0.0.0.0 ransomwaretracker.abuse.ch
+0.0.0.0 raw.githubusercontent.com
+0.0.0.0 s3.amazonaws.com
+0.0.0.0 smokingwheels.github.io
+0.0.0.0 someonewhocares.org
+0.0.0.0 sysctl.org
+0.0.0.0 winhelp2002.mvps.org
+0.0.0.0 www.fussle.de
+0.0.0.0 www.malwaredomainlist.com
+0.0.0.0 zeustracker.abuse.ch
+:: adaway.org
+:: adblock.mahakala.is
+:: android.clients.google.com
+:: clients1.google.com
+:: jansal.googlecode.com
+:: malwaredomains.lehigh.edu
+:: mirror1.malwaredomains.com
+:: pgl.yoyo.org
+:: ransomwaretracker.abuse.ch
+:: raw.githubusercontent.com
+:: s3.amazonaws.com
+:: smokingwheels.github.io
+:: someonewhocares.org
+:: sysctl.org
+:: winhelp2002.mvps.org
+:: www.fussle.de
+:: www.malwaredomainlist.com
+:: zeustracker.abuse.ch

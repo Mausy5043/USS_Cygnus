@@ -23,22 +23,25 @@ CYGNUS_LOCALBLACK_LIST="${CYGNUS_CONFIG_DIR}/black.list"
 CYGNUS_LOCALBLACKDOMS_LIST="${CYGNUS_CONFIG_DIR}/black.domains"
 # USS Cygnus allows your personal whitelist and will process this last of all.
 CYGNUS_LOCALWHITE_LIST="${CYGNUS_CONFIG_DIR}/white.list"
+# USS Cygnus allows your own whitelisted domains and will add it if it exists.
+CYGNUS_LOCALWHITEDOMS_LIST="${CYGNUS_CONFIG_DIR}/white.domains"
 # USS Cygnus also comes with it's own whitelist to ensure the source sites don't get blocked
 CYGNUS_WHITE_LIST="${SCRIPT_DIR}/white.list"
 
 # Where to put the output
 CYGNUS_OUTPUT=$(mktemp /tmp/cygnus.list.XXXXXX)
 
-# A temporary file for storing the intermediate results
+# Temporary files for storing the intermediate results
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
-
 TMP_HOSTS=$(mktemp /tmp/cygnus.XXXXXX)
 TMP_DOMAINS=$(mktemp /tmp/cygnus.XXXXXX)
+
+# Hosts to be blocked
 BLOCKED_HOSTS_URL="https://raw.githubusercontent.com/notracking/hosts-blocklists/master/hostnames.txt"
+# Domains to be blocked
 BLOCKED_DOMS_URL="https://raw.githubusercontent.com/notracking/hosts-blocklists/master/domains.txt"
 
-####### GROWING THE LIST ######
-
+####### GRABBING THE LIST ######
 wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv "${BLOCKED_HOSTS_URL}" -O "${TMP_HOSTS}" || exit 1
 wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv "${BLOCKED_DOMS_URL}" -O "${TMP_DOMAINS}" || exit 1
 
@@ -54,13 +57,32 @@ if [[ -f "${CYGNUS_LOCALBLACKDOMS_LIST}" ]]; then
   cat "${CYGNUS_LOCALBLACKDOMS_LIST}" >> "${TMP_DOMAINS}"
 fi
 
+# Next we will remove the white-listed sites.
+# use tempfiles for fgrep, because pipes can't be used due to conditional executions
+TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
+if [[ -f "${CYGNUS_WHITE_LIST}" ]]; then
+  echo "Applying USS Cygnus's WHITELIST..."
+  grep -vxFf "${CYGNUS_WHITE_LIST}" "${TMP_HOSTS}" > "${TMP_FILE}"
+  mv "${TMP_FILE}" "${TMP_HOSTS}"
+fi
+
+TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
+if [[ -f "${CYGNUS_LOCALWHITE_LIST}" ]]; then
+  echo "Applying the local WHITELIST..."
+  grep -vxFf "${CYGNUS_LOCALWHITE_LIST}" "${TMP_HOSTS}" > "${TMP_FILE}"
+  mv "${TMP_FILE}" "${TMP_HOSTS}"
+fi
+
+# code fore whitelisting domains goes here
+#if [[ -f "${CYGNUS_LOCALWHITEDOMS_LIST}" ]]; then
+
+#fi
+
 echo "Moving lists into place..."
-sudo mv "${BLACKHOSTSLIST}" "${BLACKHOSTSLIST}.bak"
 sudo mv "${TMP_HOSTS}" "${BLACKHOSTSLIST}"
 sudo chmod 744 "${BLACKHOSTSLIST}"
 sudo chown root:wheel "${BLACKHOSTSLIST}"
 
-sudo mv "${BLACKDOMSLIST}" "${BLACKDOMSLIST}.bak"
 sudo mv "${TMP_DOMAINS}" "${BLACKDOMSLIST}"
 sudo chmod 744 "${BLACKDOMSLIST}"
 sudo chown root:wheel "${BLACKDOMSLIST}"
@@ -75,46 +97,6 @@ sudo pluginctl dns
 exit 0
 
 
-
-####### SHRINKING THE LIST #######
-
-# remove duplicates to reduce memory load during filtering
-echo "Removing duplicates to conserve memory...(1)"
-sort "${TMP_FILE}" | uniq > "${CYGNUS_OUTPUT}"
-rm "${TMP_FILE}"
-
-echo "Filtering..."
-"${SCRIPT_DIR}"/filter.py "${CYGNUS_OUTPUT}" || ( echo "*** AAARGH!!! ***"; exit 1 )
-
-# remove residual duplicates after filtering
-TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
-echo "Removing duplicates...(2)"
-sort "${CYGNUS_OUTPUT}" | uniq > "${TMP_FILE}"
-mv "${TMP_FILE}" "${CYGNUS_OUTPUT}"
-
-
-# Next we will remove the white-listed sites.
-# use tempfiles for fgrep, because pipes can't be used due to conditional executions
-TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
-if [[ -f "${CYGNUS_WHITE_LIST}" ]]; then
-  echo "Applying USS Cygnus's WHITELIST..."
-  grep -vxFf "${CYGNUS_WHITE_LIST}" "${CYGNUS_OUTPUT}" > "${TMP_FILE}"
-  mv "${TMP_FILE}" "${CYGNUS_OUTPUT}"
-fi
-
-TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
-if [[ -f "${CYGNUS_LOCALWHITE_LIST}" ]]; then
-  echo "Applying the local WHITELIST..."
-  grep -vxFf "${CYGNUS_LOCALWHITE_LIST}" "${CYGNUS_OUTPUT}" > "${TMP_FILE}"
-  mv "${TMP_FILE}" "${CYGNUS_OUTPUT}"
-fi
-
-# Finally the list must be converted to a hosts list: prepending IP4 and IP6 to each line.
-echo "Converting list to hosts format..."
-TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
-awk -v ip4="${BLACKHOLE_IP4}" -v ip6="${BLACKHOLE_IP6}" '{print ip4 "  " $0;print ip6 "  " $0;}' "${CYGNUS_OUTPUT}" > "${TMP_FILE}"
-mv "${TMP_FILE}" "${CYGNUS_OUTPUT}"
-
 echo ""
 echo ""
 head "${CYGNUS_OUTPUT}"
@@ -122,4 +104,3 @@ echo ":"
 tail "${CYGNUS_OUTPUT}"
 echo ""
 echo ""
-
