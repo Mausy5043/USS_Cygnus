@@ -10,25 +10,28 @@ if [[ ! -d "${CYGNUS_CONFIG_DIR}" ]]; then
     mkdir -p "${CYGNUS_CONFIG_DIR}"
 fi
 
-ALLOWREGEX4="${BLACKHOLE_IP4_REGEX} ${SITE_TO_ALLOW}$"
-ALLOWREGEX6="${BLACKHOLE_IP6_REGEX} ${SITE_TO_ALLOW}$"
+ALLOWREGEX4H="${BLACKHOLE_IP4_REGEX} ${SITE_TO_ALLOW}$"
+ALLOWREGEX6H="${BLACKHOLE_IP6_REGEX} ${SITE_TO_ALLOW}$"
+ALLOWREGEX4D="address=/${SITE_TO_ALLOW}/${BLACKHOLE_IP4_REGEX}$"
+ALLOWREGEX6D="address=/${SITE_TO_ALLOW}/${BLACKHOLE_IP6_REGEX} $"
+
 #test000007.ru
 
 echo "Matching hosts:"
-grep -E "${ALLOWREGEX4}" "${BLACKHOSTSLIST}"
-grep -E "${ALLOWREGEX6}" "${BLACKHOSTSLIST}"
+grep -E "${ALLOWREGEX4H}" "${BLACKHOSTSLIST}"
+grep -E "${ALLOWREGEX6H}" "${BLACKHOSTSLIST}"
 echo ""
 echo "Matching domains:"
-grep -E "${ALLOWREGEX4}" "${BLACKDOMSLIST}"
-grep -E "${ALLOWREGEX6}" "${BLACKDOMSLIST}"
+grep -E "${ALLOWREGEX4D}" "${BLACKDOMSLIST}"
+grep -E "${ALLOWREGEX6D}" "${BLACKDOMSLIST}"
 
 exit 1
 
 # Remove from sites blacklist
 TMP_FILE4=$(mktemp /tmp/dnswhite.4.XXXXXX)
 TMP_FILE6=$(mktemp /tmp/dnswhite.6.XXXXXX)
-grep -vE "${ALLOWREGEX4}" "${BLACKHOSTSLIST}" > "${TMP_FILE4}"
-grep -vE "${ALLOWREGEX6}" "${TMP_FILE4}" > "${TMP_FILE6}"
+grep -vE "${ALLOWREGEX4H}" "${BLACKHOSTSLIST}" > "${TMP_FILE4}"
+grep -vE "${ALLOWREGEX6H}" "${TMP_FILE4}" > "${TMP_FILE6}"
 sudo mv "${TMP_FILE6}" "${BLACKHOSTSLIST}"
 sudo rm "${TMP_FILE4}"
 sudo chmod 744 "${BLACKHOSTSLIST}"
@@ -37,8 +40,8 @@ sudo chown root:wheel "${BLACKHOSTSLIST}"
 # Remove from domains blocklist
 TMP_FILE4=$(mktemp /tmp/dnswhite.4.XXXXXX)
 TMP_FILE6=$(mktemp /tmp/dnswhite.6.XXXXXX)
-grep -vE "${ALLOWREGEX4}" "${BLACKDOMSLIST}" > "${TMP_FILE4}"
-grep -vE "${ALLOWREGEX6}" "${TMP_FILE4}" > "${TMP_FILE6}"
+grep -vE "${ALLOWREGEX4D}" "${BLACKDOMSLIST}" > "${TMP_FILE4}"
+grep -vE "${ALLOWREGEX6D}" "${TMP_FILE4}" > "${TMP_FILE6}"
 sudo mv "${TMP_FILE6}" "${BLACKDOMSLIST}"
 sudo rm "${TMP_FILE4}"
 sudo chmod 744 "${BLACKDOMSLIST}"
