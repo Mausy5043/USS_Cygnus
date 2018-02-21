@@ -18,9 +18,6 @@ CYGNUS_LOCALWHITEDOMS_LIST="${CYGNUS_CONFIG_DIR}/white.domains"
 # USS Cygnus also comes with it's own whitelist to ensure the source sites don't get blocked
 CYGNUS_WHITE_LIST="${SCRIPT_DIR}/white.list"
 
-# Where to put the output
-CYGNUS_OUTPUT=$(mktemp /tmp/cygnus.list.XXXXXX)
-
 # Temporary files for storing the intermediate results
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
 TMP_HOSTS=$(mktemp /tmp/cygnus.XXXXXX)
@@ -35,6 +32,8 @@ BLOCKED_DOMS_URL="https://raw.githubusercontent.com/notracking/hosts-blocklists/
 wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv "${BLOCKED_HOSTS_URL}" -O "${TMP_HOSTS}" || exit 1
 wget -U 'Mozilla/5.0 (wget)' --timeout=20 -nv "${BLOCKED_DOMS_URL}" -O "${TMP_DOMAINS}" || exit 1
 
+
+####### ADD-ITIONAL SITES ######
 # Now, we add the user's black.List
 if [[ -f "${CYGNUS_LOCALBLACK_LIST}" ]]; then
   echo "Consolidating the local BLACKLIST..."
@@ -47,6 +46,7 @@ if [[ -f "${CYGNUS_LOCALBLACKDOMS_LIST}" ]]; then
   cat "${CYGNUS_LOCALBLACKDOMS_LIST}" >> "${TMP_DOMAINS}"
 fi
 
+###### BUT NOT ALL ######
 # Next we will remove the white-listed sites.
 # use tempfiles for fgrep, because pipes can't be used due to conditional executions
 TMP_FILE=$(mktemp /tmp/cygnus.XXXXXX)
@@ -64,9 +64,13 @@ if [[ -f "${CYGNUS_LOCALWHITE_LIST}" ]]; then
 fi
 
 # code fore whitelisting domains goes here
-#if [[ -f "${CYGNUS_LOCALWHITEDOMS_LIST}" ]]; then
-
-#fi
+if [[ -f "${CYGNUS_LOCALWHITEDOMS_LIST}" ]]; then
+  echo "Applying the LOCAL WHITE-DOMAINS LIST..."
+  echo "This function not yet supported!"
+  # I think it done like this:
+  # grep -vxFf "${CYGNUS_LOCALWHITEDOMS_LIST}" "${TMP_DOMAINS}" > "${TMP_FILE}"
+  # mv "${TMP_FILE}" "${TMP_DOMAINS}"
+fi
 
 echo "Moving lists into place..."
 sudo mv "${TMP_HOSTS}" "${BLACKHOSTSLIST}"
@@ -83,14 +87,3 @@ echo "$(wc -l ${BLACKDOMSLIST}  | awk '{print $1 "/ 2"}' | bc) domains will be b
 echo "Restarting DNS to activitate the new lists..."
 
 sudo pluginctl dns
-
-exit 0
-
-
-echo ""
-echo ""
-head "${CYGNUS_OUTPUT}"
-echo ":"
-tail "${CYGNUS_OUTPUT}"
-echo ""
-echo ""
