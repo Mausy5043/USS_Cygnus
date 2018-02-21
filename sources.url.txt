@@ -1,5 +1,0 @@
-https://ransomwaretracker.abuse.ch/downloads/RW_URLBL.txt
-https://ransomwaretracker.abuse.ch/downloads/CW_C2_URLBL.txt
-https://ransomwaretracker.abuse.ch/downloads/TC_C2_URLBL.txt
-https://ransomwaretracker.abuse.ch/downloads/TC_DS_URLBL.txt
-https://ransomwaretracker.abuse.ch/downloads/LY_DS_URLBL.txt

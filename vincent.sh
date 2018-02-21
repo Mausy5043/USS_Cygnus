@@ -7,16 +7,6 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # shellcheck source=/dev/null
 source "${SCRIPT_DIR}/bin/include"
 
-# USS Cygnus's sources of blocklists are very divers:
-# Sources that supply just a list of hostnames, one per line:
-CYGNUS_FLAT_LIST="${SCRIPT_DIR}/sources.flat.txt"
-# Sources that supply their list formatted as a hosts file:
-CYGNUS_127_LIST="${SCRIPT_DIR}/sources.127.txt"
-# Sources that supply a list of URLs (we will block the entire domain)
-CYGNUS_URL_LIST="${SCRIPT_DIR}/sources.url.txt"
-# Sources that supply a list of IPs:
-CYGNUS_IPs_LIST="${SCRIPT_DIR}/sources.ip.txt"
-
 # USS Cygnus allows your own blacklist and will add it if it exists.
 CYGNUS_LOCALBLACK_LIST="${CYGNUS_CONFIG_DIR}/black.list"
 # USS Cygnus allows your own blacklisted domains and will add it if it exists.

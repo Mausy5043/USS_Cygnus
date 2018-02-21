@@ -1,7 +1,0 @@
-http://adblock.mahakala.is/hosts
-http://someonewhocares.org/hosts/hosts
-http://sysctl.org/cameleon/hosts
-https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
-https://adaway.org/hosts.txt
-http://www.malwaredomainlist.com/hostslist/hosts.txt
-http://winhelp2002.mvps.org/hosts.txt
