@@ -24,6 +24,7 @@ sudo chmod 744 "${BLACKLIST}"
 sudo chown root:wheel "${BLACKLIST}"
 
 # Remember this site
-echo "${SITE_TO_BLOCK}" >> "${CYGNUS_CONFIG_DIR}/black.list"
+echo "${BLOCKRULE4}" >> "${CYGNUS_CONFIG_DIR}/black.list"
+echo "${BLOCKRULE6}" >> "${CYGNUS_CONFIG_DIR}/black.list"
 
 sudo pluginctl dns
