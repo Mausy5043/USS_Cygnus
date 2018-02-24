@@ -67,7 +67,7 @@ fi
 if [[ -f "${CYGNUS_LOCALWHITEDOMS_LIST}" ]]; then
   echo "Applying the LOCAL WHITE-DOMAINS LIST..."
   echo "This function not yet supported!"
-  # I think it done like this:
+  # I think its done like this:
   # grep -vxFf "${CYGNUS_LOCALWHITEDOMS_LIST}" "${TMP_DOMAINS}" > "${TMP_FILE}"
   # mv "${TMP_FILE}" "${TMP_DOMAINS}"
 fi
@@ -83,6 +83,14 @@ sudo chown root:wheel "${BLACKDOMSLIST}"
 
 echo "$(wc -l ${BLACKHOSTSLIST} | awk '{print $1 "/ 2"}' | bc) hosts will be blocked"
 echo "$(wc -l ${BLACKDOMSLIST}  | awk '{print $1 "/ 2"}' | bc) domains will be blocked"
+
+head "${BLACKHOSTSLIST}"
+echo ":"
+tail "${BLACKHOSTSLIST}"
+echo ""
+head "${BLACKDOMSLIST}"
+echo ":"
+tail "${BLACKDOMSLIST}"
 
 echo "Restarting DNS to activitate the new lists..."
 
