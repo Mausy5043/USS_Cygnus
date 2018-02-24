@@ -84,11 +84,11 @@ sudo chown root:wheel "${BLACKDOMSLIST}"
 echo "$(wc -l ${BLACKHOSTSLIST} | awk '{print $1 "/ 2"}' | bc) hosts will be blocked"
 echo "$(wc -l ${BLACKDOMSLIST}  | awk '{print $1 "/ 2"}' | bc) domains will be blocked"
 
-head "${BLACKHOSTSLIST}"
+head -n 30 "${BLACKHOSTSLIST}"
 echo ":"
 tail "${BLACKHOSTSLIST}"
 echo ""
-head "${BLACKDOMSLIST}"
+head -n 30 "${BLACKDOMSLIST}"
 echo ":"
 tail "${BLACKDOMSLIST}"
 
