@@ -15,36 +15,49 @@ ALLOWREGEX6H="${BLACKHOLE_IP6_REGEX} ${SITE_TO_ALLOW}$"
 ALLOWREGEX4D="address=/${SITE_TO_ALLOW}/${BLACKHOLE_IP4_REGEX}$"
 ALLOWREGEX6D="address=/${SITE_TO_ALLOW}/${BLACKHOLE_IP6_REGEX}$"
 
-echo "Matching hosts:"
-grep -E "${ALLOWREGEX4H}" "${BLACKHOSTSLIST}"
-grep -E "${ALLOWREGEX6H}" "${BLACKHOSTSLIST}"
-echo ""
-echo "Matching domains:"
-grep -E "${ALLOWREGEX4D}" "${BLACKDOMSLIST}"
-grep -E "${ALLOWREGEX6D}" "${BLACKDOMSLIST}"
+LISTLINES=$(grep -c "${ALLOWREGEX4H}" "${BLACKHOSTSLIST}")
+if [ "$LISTLINES" -ne "0" ]; then
+  echo "Matching hosts:"
+  grep -E "${ALLOWREGEX4H}" "${BLACKHOSTSLIST}"
+  grep -E "${ALLOWREGEX6H}" "${BLACKHOSTSLIST}"
+  echo ""
+  
+  # Remove from white-sites blocklist
+  TMP_FILE4=$(mktemp /tmp/dnswhite.4.XXXXXX)
+  TMP_FILE6=$(mktemp /tmp/dnswhite.6.XXXXXX)
+  grep -vE "${ALLOWREGEX4H}" "${BLACKHOSTSLIST}" > "${TMP_FILE4}"
+  grep -vE "${ALLOWREGEX6H}" "${TMP_FILE4}" > "${TMP_FILE6}"
+  sudo mv "${TMP_FILE6}" "${BLACKHOSTSLIST}"
+  sudo rm "${TMP_FILE4}"
+  sudo chmod 744 "${BLACKHOSTSLIST}"
+  sudo chown root:wheel "${BLACKHOSTSLIST}"
+  
+  # Remember this site
+  echo "0.0.0.0 ${SITE_TO_ALLOW}" >> "${CYGNUS_CONFIG_DIR}/white.list"
+  echo ":: ${SITE_TO_ALLOW}" >> "${CYGNUS_CONFIG_DIR}/white.list"
+fi
 
-# Remove from white-sites blocklist
-TMP_FILE4=$(mktemp /tmp/dnswhite.4.XXXXXX)
-TMP_FILE6=$(mktemp /tmp/dnswhite.6.XXXXXX)
-grep -vE "${ALLOWREGEX4H}" "${BLACKHOSTSLIST}" > "${TMP_FILE4}"
-grep -vE "${ALLOWREGEX6H}" "${TMP_FILE4}" > "${TMP_FILE6}"
-sudo mv "${TMP_FILE6}" "${BLACKHOSTSLIST}"
-sudo rm "${TMP_FILE4}"
-sudo chmod 744 "${BLACKHOSTSLIST}"
-sudo chown root:wheel "${BLACKHOSTSLIST}"
 
-# Remove from white-domains blocklist
-TMP_FILE4=$(mktemp /tmp/dnswhite.4.XXXXXX)
-TMP_FILE6=$(mktemp /tmp/dnswhite.6.XXXXXX)
-grep -vE "${ALLOWREGEX4D}" "${BLACKDOMSLIST}" > "${TMP_FILE4}"
-grep -vE "${ALLOWREGEX6D}" "${TMP_FILE4}" > "${TMP_FILE6}"
-sudo mv "${TMP_FILE6}" "${BLACKDOMSLIST}"
-sudo rm "${TMP_FILE4}"
-sudo chmod 744 "${BLACKDOMSLIST}"
-sudo chown root:wheel "${BLACKDOMSLIST}"
+DOMLINES=$(grep -c "${ALLOWREGEX4D}" "${BLACKDOMSLIST}")
+if [ "$DOMLINES" -ne "0" ]; then
+  echo "Matching domains:"
+  grep -E "${ALLOWREGEX4D}" "${BLACKDOMSLIST}"
+  grep -E "${ALLOWREGEX6D}" "${BLACKDOMSLIST}"
 
-# Remember this site
-echo "0.0.0.0 ${SITE_TO_ALLOW}" >> "${CYGNUS_CONFIG_DIR}/white.list"
-echo ":: ${SITE_TO_ALLOW}" >> "${CYGNUS_CONFIG_DIR}/white.list"
+  # Remove from white-domains blocklist
+  TMP_FILE4=$(mktemp /tmp/dnswhite.4.XXXXXX)
+  TMP_FILE6=$(mktemp /tmp/dnswhite.6.XXXXXX)
+  grep -vE "${ALLOWREGEX4D}" "${BLACKDOMSLIST}" > "${TMP_FILE4}"
+  grep -vE "${ALLOWREGEX6D}" "${TMP_FILE4}" > "${TMP_FILE6}"
+  sudo mv "${TMP_FILE6}" "${BLACKDOMSLIST}"
+  sudo rm "${TMP_FILE4}"
+  sudo chmod 744 "${BLACKDOMSLIST}"
+  sudo chown root:wheel "${BLACKDOMSLIST}"
+  address=/zzyonghao.com/0.0.0.0
+  # Remember this site
+  echo "address=/${SITE_TO_ALLOW}/0.0.0.0" >> "${CYGNUS_CONFIG_DIR}/white.domains"
+  echo "address=/${SITE_TO_ALLOW}/::" >> "${CYGNUS_CONFIG_DIR}/white.domains"
+fi
+
 
 sudo pluginctl dns
