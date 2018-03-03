@@ -66,7 +66,6 @@ fi
 # code fore whitelisting domains goes here
 if [[ -f "${CYGNUS_LOCALWHITEDOMS_LIST}" ]]; then
   echo "Applying the LOCAL WHITE-DOMAINS LIST..."
-  echo "This function not yet supported!"
   grep -vxFf "${CYGNUS_LOCALWHITEDOMS_LIST}" "${TMP_DOMAINS}" > "${TMP_FILE}"
   mv "${TMP_FILE}" "${TMP_DOMAINS}"
 fi
