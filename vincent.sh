@@ -67,9 +67,8 @@ fi
 if [[ -f "${CYGNUS_LOCALWHITEDOMS_LIST}" ]]; then
   echo "Applying the LOCAL WHITE-DOMAINS LIST..."
   echo "This function not yet supported!"
-  # I think its done like this:
-  # grep -vxFf "${CYGNUS_LOCALWHITEDOMS_LIST}" "${TMP_DOMAINS}" > "${TMP_FILE}"
-  # mv "${TMP_FILE}" "${TMP_DOMAINS}"
+  grep -vxFf "${CYGNUS_LOCALWHITEDOMS_LIST}" "${TMP_DOMAINS}" > "${TMP_FILE}"
+  mv "${TMP_FILE}" "${TMP_DOMAINS}"
 fi
 
 echo "Moving lists into place..."
